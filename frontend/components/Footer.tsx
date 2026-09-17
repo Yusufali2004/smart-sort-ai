@@ -15,7 +15,7 @@ export function Footer() {
           <span>— FYP Intelligent Waste Sorting Assistant</span>
         </div>
         <p className="text-[11px] text-zinc-400">
-          Powered by Google Gemini Vision &amp; FastAPI • Keep our planet clean 🌍
+          AI-powered waste analysis &amp; FastAPI • Keep our planet clean 🌍
         </p>
       </div>
     </footer>

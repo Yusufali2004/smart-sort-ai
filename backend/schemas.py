@@ -16,6 +16,44 @@ class WasteCategory(str, Enum):
     TRASH = "trash"
 
 
+ALLOWED_CATEGORIES = {
+    "plastic",
+    "paper",
+    "cardboard",
+    "glass",
+    "metal",
+    "biological",
+    "battery",
+    "shoes",
+    "clothes",
+    "trash",
+}
+
+CATEGORY_MAP = {
+    "organic": "biological",
+    "food": "biological",
+    "food waste": "biological",
+    "bio": "biological",
+    "compost": "biological",
+    "e-waste": "trash",
+    "electronic": "trash",
+    "electronics": "trash",
+    "clothing": "clothes",
+    "fabric": "clothes",
+    "textile": "clothes",
+    "footwear": "shoes",
+    "shoe": "shoes",
+    "can": "metal",
+    "cans": "metal",
+    "tin": "metal",
+    "bottle": "plastic",
+    "general trash": "trash",
+    "garbage": "trash",
+    "general waste": "trash",
+    "landfill": "trash",
+}
+
+
 class WasteItem(BaseModel):
     name: str = Field(..., description="Descriptive name of the detected object (e.g. plastic bottle, soda can)")
     category: WasteCategory = Field(..., description="One of the 10 SmartSort standard categories")
@@ -23,6 +61,32 @@ class WasteItem(BaseModel):
     confidence: float = Field(..., ge=0.0, le=1.0, description="Conservative confidence score between 0.0 and 1.0")
     recyclable: bool = Field(..., description="Whether this item is generally recyclable")
     disposal_method: str = Field(..., description="Actionable disposal and sorting guidance")
+
+    @field_validator("category", mode="before")
+    @classmethod
+    def normalize_category(cls, v):
+        if isinstance(v, WasteCategory):
+            return v
+        if not isinstance(v, str):
+            return WasteCategory.TRASH
+        cat = v.strip().lower()
+        if cat in ALLOWED_CATEGORIES:
+            return WasteCategory(cat)
+        if cat in CATEGORY_MAP:
+            return WasteCategory(CATEGORY_MAP[cat])
+        for key in ALLOWED_CATEGORIES:
+            if key in cat:
+                return WasteCategory(key)
+        return WasteCategory.TRASH
+
+    @field_validator("quantity", mode="before")
+    @classmethod
+    def normalize_quantity(cls, v):
+        try:
+            val = int(v)
+            return max(1, val)
+        except (ValueError, TypeError):
+            return 1
 
     @field_validator("confidence", mode="before")
     @classmethod
@@ -45,6 +109,7 @@ class AnalysisData(BaseModel):
 class AnalysisResponse(BaseModel):
     success: bool = True
     data: AnalysisData
+    message: Optional[str] = None
 
 
 class HealthResponse(BaseModel):

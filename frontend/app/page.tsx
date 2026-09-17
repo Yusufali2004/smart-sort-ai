@@ -66,7 +66,7 @@ export default function Home() {
     setErrorMessage(null);
   };
 
-  // Trigger Gemini Analysis
+  // Trigger Waste Analysis
   const handleAnalyze = async () => {
     if (!selectedFile) return;
 
@@ -80,7 +80,7 @@ export default function Home() {
       console.error("Analysis failed:", err);
       setErrorMessage(
         err.message ||
-          "Could not complete analysis. Please verify your GEMINI_API_KEY in backend/.env."
+          "Could not complete analysis. Please verify backend API status and configuration."
       );
     } finally {
       setIsAnalyzing(false);
@@ -164,7 +164,7 @@ export default function Home() {
           />
         )}
 
-        {/* If Analyzing with Gemini Vision */}
+        {/* If Analyzing Waste */}
         {isAnalyzing && (
           <div className="my-auto">
             <LoadingOverlay previewUrl={previewUrl} />
@@ -271,7 +271,7 @@ export default function Home() {
                   className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-base shadow-xl shadow-emerald-900/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2.5"
                 >
                   <Sparkles className="w-5 h-5 animate-pulse" />
-                  Analyze Waste with Gemini
+                  Analyze Waste
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -394,7 +394,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 py-6 px-4 text-center text-xs text-zinc-400 dark:text-zinc-500">
         <p>
-          SmartSort AI &bull; Production-Quality Rapid MVP &bull; Powered by Google Gemini Vision
+          SmartSort AI &bull; Production-Quality Rapid MVP &bull; AI-powered waste analysis
         </p>
         <p className="text-[11px] mt-1 text-zinc-400/80">
           AI estimates do not substitute for local municipal solid waste guidelines.

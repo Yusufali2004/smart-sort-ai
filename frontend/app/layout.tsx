@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "SmartSort AI — Intelligent Waste Sorting & Recycling",
   description:
-    "Snap your waste. Know where it goes. Multi-object waste recognition and disposal guidance powered by Gemini Vision.",
+    "Snap your waste. Know where it goes. AI-powered multi-object waste analysis and disposal guidance.",
 };
 
 export default function RootLayout({

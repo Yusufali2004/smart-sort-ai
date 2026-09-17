@@ -43,7 +43,7 @@ export function Header() {
               </span>
             </div>
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400 -mt-0.5">
-              Gemini Vision Multi-Object Waste Analyzer
+              AI-Powered Multi-Object Waste Analyzer
             </p>
           </div>
         </div>

@@ -14,7 +14,7 @@ const STEPS = [
     icon: Scan,
   },
   {
-    title: "Gemini Vision Detection",
+    title: "AI Vision Detection",
     desc: "Analyzing visual scene to identify multiple distinct waste items...",
     icon: BrainCircuit,
   },
@@ -69,7 +69,7 @@ export function LoadingOverlay({ previewUrl }: LoadingOverlayProps) {
       </div>
 
       <p className="text-xs text-zinc-400 max-w-sm text-center mb-8">
-        Google Gemini Vision is scanning for bottles, cans, paper, biological waste, and packaging.
+        AI vision is scanning for bottles, cans, paper, biological waste, and packaging.
       </p>
 
       {/* Step Progress Indicators */}

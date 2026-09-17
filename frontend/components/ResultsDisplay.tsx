@@ -141,7 +141,7 @@ export function ResultsDisplay({ result, previewUrl, onReset }: ResultsDisplayPr
               </span>
             </h3>
             <span className="text-xs text-zinc-400 dark:text-zinc-500 italic">
-              Estimated by Gemini Vision
+              Estimated by AI Vision
             </span>
           </div>
 
@@ -246,7 +246,7 @@ export function ResultsDisplay({ result, previewUrl, onReset }: ResultsDisplayPr
         <div className="space-y-1">
           <p className="font-semibold">AI Guidance &amp; Limitations Notice</p>
           <p className="text-amber-800 dark:text-amber-300/90 leading-relaxed">
-            Gemini Vision analysis performs probabilistic object estimation. Tiny, occluded, or overlapping items may be merged or misidentified. This system does not claim physical pixel-level instance segmentation. Always observe municipal disposal symbols.
+            AI vision analysis performs probabilistic object estimation. Tiny, occluded, or overlapping items may be merged or misidentified. This system does not claim physical pixel-level instance segmentation. Always observe municipal disposal symbols.
           </p>
         </div>
       </div>

@@ -20,7 +20,7 @@ logger = logging.getLogger("smartsort.backend")
 
 app = FastAPI(
     title="SmartSort AI Backend",
-    description="Multimodal waste analysis and recycling guidance powered by Gemini Vision",
+    description="Multimodal waste analysis and recycling guidance.",
     version="1.0.0",
 )
 
@@ -63,7 +63,7 @@ async def analyze_image(
     file: UploadFile = File(None, description="Alternative field 'file'"),
 ):
     """
-    Analyzes an uploaded waste image using Google Gemini Vision.
+    Analyzes an uploaded waste image using AI vision.
     Detects individual objects, counts items, categorizes them,
     and returns recycling and disposal instructions.
     """
@@ -105,7 +105,7 @@ async def analyze_image(
             detail=f"Image size exceeds 10MB limit (size: {len(content) / (1024*1024):.1f}MB).",
         )
 
-    # Perform Gemini analysis
+    # Perform AI analysis
     try:
         result_data = await gemini_service.analyze_image(
             image_bytes=content,
@@ -124,11 +124,21 @@ async def analyze_image(
         )
     except Exception as e:
         logger.error(f"Analysis failure: {e}", exc_info=True)
+        err_msg = str(e)
+        if "503" in err_msg or "UNAVAILABLE" in err_msg or "high demand" in err_msg:
+            return JSONResponse(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                content={
+                    "success": False,
+                    "error": "Model High Demand",
+                    "detail": "The AI analysis model is experiencing temporary high demand. Please retry in a few seconds.",
+                },
+            )
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={
                 "success": False,
-                "error": "Gemini Analysis Error",
+                "error": "AI Analysis Error",
                 "detail": str(e),
             },
         )

@@ -12,6 +12,8 @@ interface CameraCaptureProps {
 export function CameraCapture({ onCapture, onFallbackToUpload, onCancel }: CameraCaptureProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const isMountedRef = useRef(true);
 
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [cameraFacing, setCameraFacing] = useState<"environment" | "user">("environment");
@@ -29,7 +31,7 @@ export function CameraCapture({ onCapture, onFallbackToUpload, onCancel }: Camer
       }
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter((d) => d.kind === "videoinput");
-      if (videoDevices.length > 1) {
+      if (videoDevices.length > 1 && isMountedRef.current) {
         setHasMultipleCameras(true);
       }
     } catch {
@@ -39,11 +41,15 @@ export function CameraCapture({ onCapture, onFallbackToUpload, onCancel }: Camer
 
   // Stop camera tracks
   const stopStream = useCallback(() => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
     }
-  }, [stream]);
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setStream(null);
+  }, []);
 
   // Start camera stream
   const startCamera = useCallback(
@@ -52,13 +58,13 @@ export function CameraCapture({ onCapture, onFallbackToUpload, onCancel }: Camer
       setError(null);
 
       // Stop previous stream
-      if (stream) {
-        stream.getTracks().forEach((t) => t.stop());
-      }
+      stopStream();
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setError("Your browser does not support in-app camera access. Please use file upload instead.");
-        setIsInitializing(false);
+        if (isMountedRef.current) {
+          setError("Your browser does not support in-app camera access. Please use file upload instead.");
+          setIsInitializing(false);
+        }
         return;
       }
 
@@ -73,36 +79,58 @@ export function CameraCapture({ onCapture, onFallbackToUpload, onCancel }: Camer
         };
 
         const newStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        if (!isMountedRef.current) {
+          newStream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+
+        streamRef.current = newStream;
         setStream(newStream);
 
         if (videoRef.current) {
           videoRef.current.srcObject = newStream;
-          await videoRef.current.play();
+          try {
+            await videoRef.current.play();
+          } catch (playErr: any) {
+            // Ignore AbortError / harmless race condition when play is interrupted by a new load or unmount
+            if (playErr.name !== "AbortError") {
+              console.warn("Video play interrupted:", playErr);
+            }
+          }
         }
         await checkDevices();
       } catch (err: any) {
+        if (err.name === "AbortError") {
+          return;
+        }
         console.error("Camera access error:", err);
-        if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
-          setError("Camera permission denied. Please allow camera permissions in your browser or switch to image upload.");
-        } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
-          setError("No camera device was detected on your system.");
-        } else {
-          setError(`Unable to start camera: ${err.message || "Unknown error"}. You can upload an image instead.`);
+        if (isMountedRef.current) {
+          if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+            setError("Camera permission denied. Please allow camera permissions in your browser or switch to image upload.");
+          } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+            setError("No camera device was detected on your system.");
+          } else {
+            setError(`Unable to start camera: ${err.message || "Unknown error"}. You can upload an image instead.`);
+          }
         }
       } finally {
-        setIsInitializing(false);
+        if (isMountedRef.current) {
+          setIsInitializing(false);
+        }
       }
     },
-    [stream, checkDevices]
+    [stopStream, checkDevices]
   );
 
   useEffect(() => {
+    isMountedRef.current = true;
     startCamera(cameraFacing);
     return () => {
+      isMountedRef.current = false;
       stopStream();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraFacing]);
+  }, [cameraFacing, startCamera, stopStream]);
 
   // Switch facing mode
   const handleToggleFacing = () => {

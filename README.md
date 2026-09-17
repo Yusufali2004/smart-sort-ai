@@ -138,8 +138,8 @@ Create `backend/.env` (or copy from `backend/.env.example`):
 # Your Google Gemini API Key from Google AI Studio:
 GEMINI_API_KEY=your_gemini_api_key_here
 
-# (Optional) Preferred Gemini Model - defaults to gemini-2.5-flash or gemini-1.5-flash
-GEMINI_MODEL=gemini-2.5-flash
+# (Optional) Preferred Gemini Model - defaults to gemini-3.6-flash
+GEMINI_MODEL=gemini-3.6-flash
 
 # Backend server port
 PORT=8000
