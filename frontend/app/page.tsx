@@ -80,7 +80,7 @@ export default function Home() {
       console.error("Analysis failed:", err);
       setErrorMessage(
         err.message ||
-          "Could not complete analysis. Please verify backend API status and configuration."
+        "Could not complete analysis. Please verify backend API status and configuration."
       );
     } finally {
       setIsAnalyzing(false);
@@ -396,9 +396,7 @@ export default function Home() {
         <p>
           SmartSort AI &bull; Production-Quality Rapid MVP &bull; AI-powered waste analysis
         </p>
-        <p className="text-[11px] mt-1 text-zinc-400/80">
-          AI estimates do not substitute for local municipal solid waste guidelines.
-        </p>
+
       </footer>
     </div>
   );

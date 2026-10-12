@@ -212,13 +212,12 @@ export function ResultsDisplay({ result, previewUrl, onReset }: ResultsDisplayPr
                     </div>
                     <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          confidencePct >= 85
-                            ? "bg-emerald-500"
-                            : confidencePct >= 65
+                        className={`h-full rounded-full transition-all duration-500 ${confidencePct >= 85
+                          ? "bg-emerald-500"
+                          : confidencePct >= 65
                             ? "bg-teal-500"
                             : "bg-amber-500"
-                        }`}
+                          }`}
                         style={{ width: `${confidencePct}%` }}
                       />
                     </div>
@@ -240,16 +239,6 @@ export function ResultsDisplay({ result, previewUrl, onReset }: ResultsDisplayPr
         </div>
       )}
 
-      {/* AI Limitations Notice Banner */}
-      <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-amber-900 dark:text-amber-200 text-xs">
-        <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
-        <div className="space-y-1">
-          <p className="font-semibold">AI Guidance &amp; Limitations Notice</p>
-          <p className="text-amber-800 dark:text-amber-300/90 leading-relaxed">
-            AI vision analysis performs probabilistic object estimation. Tiny, occluded, or overlapping items may be merged or misidentified. This system does not claim physical pixel-level instance segmentation. Always observe municipal disposal symbols.
-          </p>
-        </div>
-      </div>
 
       {/* Footer Action: Scan Another */}
       <div className="pt-2 flex justify-center">
